@@ -1,13 +1,13 @@
 package v1
 
 import (
-	"database/sql"
+	"kong-assignment/internal/storage"
 
 	"github.com/gorilla/mux"
 )
 
-func RegisterRoutes(router *mux.Router, db *sql.DB) {
-	serviceHandler := &ServiceHandler{DB: db}
+func RegisterRoutes(router *mux.Router, service storage.ServiceRepo) {
+	serviceHandler := &ServiceHandler{serviceRepo: service}
 
 	router.HandleFunc("/v1/services", serviceHandler.GetServices).Methods("GET")
 }

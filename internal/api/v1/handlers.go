@@ -1,60 +1,32 @@
 package v1
 
 import (
-	"database/sql"
 	"encoding/json"
 	"fmt"
 	"kong-assignment/internal/models"
+	"kong-assignment/internal/storage"
 	"net/http"
 )
 
 type ServiceHandler struct {
-	DB *sql.DB
+	serviceRepo storage.ServiceRepo
 }
 
 func (handler *ServiceHandler) GetServices(w http.ResponseWriter, r *http.Request) {
-	nameFilter := r.URL.Query().Get("name")
+	name := r.URL.Query().Get("name")
 	sort := r.URL.Query().Get("sort")
 	limit := r.URL.Query().Get("limit")
 	offset := r.URL.Query().Get("offset")
 
-	query := "SELECT * FROM services"
-	if nameFilter != "" {
-		query += " WHERE name = $1"
+	queryParams := models.QueryParams{
+		Name:   name,
+		Sort:   sort,
+		Limit:  limit,
+		Offset: offset,
 	}
-	if sort != "" {
-		query += " ORDER BY " + sort
-	}
-	if limit != "" {
-		query += " LIMIT " + limit
-	}
-	if offset != "" {
-		query += " OFFSET " + offset
-	}
-
-	fmt.Println(query)
-
-	rows, err := handler.DB.Query(query)
+	services, err := handler.serviceRepo.GetServices(queryParams)
 	if err != nil {
-		fmt.Println("Error querying database: ", err)
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-	defer rows.Close()
-
-	var services []models.Service
-
-	for rows.Next() {
-		var service models.Service
-		err := rows.Scan(&service.Description, &service.Name, &service.Version)
-		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return
-		}
-		services = append(services, service)
-	}
-
-	if err := rows.Err(); err != nil {
+		fmt.Println("Error getting data: ", err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
