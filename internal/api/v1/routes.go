@@ -7,7 +7,7 @@ import (
 )
 
 func RegisterRoutes(router *mux.Router, service storage.ServiceRepo) {
-	serviceHandler := &ServiceHandler{serviceRepo: service}
+	serviceHandler := &ServiceHandler{ServiceRepo: service}
 
 	router.HandleFunc("/v1/services", serviceHandler.GetServices).Methods("GET")
 }

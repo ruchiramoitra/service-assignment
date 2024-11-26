@@ -8,6 +8,8 @@ import (
 	"github.com/joho/godotenv"
 )
 
+var GodotenvLoad = godotenv.Load
+
 type PostgresDbConfig struct {
 	Host     string
 	Port     int
@@ -17,7 +19,7 @@ type PostgresDbConfig struct {
 }
 
 func LoadConfig() (*PostgresDbConfig, error) {
-	if err := godotenv.Load(); err != nil {
+	if err := GodotenvLoad(); err != nil {
 		return nil, fmt.Errorf("error loading .env file: %w", err)
 	}
 

@@ -9,7 +9,7 @@ import (
 )
 
 type ServiceHandler struct {
-	serviceRepo storage.ServiceRepo
+	ServiceRepo storage.ServiceRepo
 }
 
 func (handler *ServiceHandler) GetServices(w http.ResponseWriter, r *http.Request) {
@@ -24,7 +24,7 @@ func (handler *ServiceHandler) GetServices(w http.ResponseWriter, r *http.Reques
 		Limit:  limit,
 		Offset: offset,
 	}
-	services, err := handler.serviceRepo.GetServices(queryParams)
+	services, err := handler.ServiceRepo.GetServices(queryParams)
 	if err != nil {
 		fmt.Println("Error getting data: ", err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)

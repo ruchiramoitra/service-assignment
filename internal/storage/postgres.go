@@ -6,6 +6,7 @@ import (
 	"kong-assignment/config"
 	"kong-assignment/internal/models"
 	"log"
+	"strings"
 
 	_ "github.com/lib/pq" // postgres driver
 )
@@ -29,30 +30,35 @@ func NewPostgresStorage(db *sql.DB) *PostgresStorage {
 }
 
 func (ps *PostgresStorage) GetServices(queryParams models.QueryParams) ([]models.Service, error) {
-
 	query := "SELECT * FROM services"
+	var conditions []string
+
 	if queryParams.Name != "" {
-		query += " WHERE name = " + queryParams.Name
+		conditions = append(conditions, "name = "+queryParams.Name)
 	}
 	if queryParams.Sort != "" {
-		query += " ORDER BY " + queryParams.Sort
+		conditions = append(conditions, " ORDER BY "+queryParams.Sort)
 	}
 	if queryParams.Limit != "" {
-		query += " LIMIT " + queryParams.Limit
+		conditions = append(conditions, "LIMIT "+queryParams.Limit)
 	}
 	if queryParams.Offset != "" {
-		query += " OFFSET " + queryParams.Offset
+		conditions = append(conditions, "OFFSET "+queryParams.Offset)
 	}
 
+	// Add conditions to the query if any
+	if len(conditions) > 0 {
+		query += " WHERE " + strings.Join(conditions[:1], " ")
+		query += strings.Join(conditions[1:], " ")
+	}
+	fmt.Println("actual query: ", query)
 	rows, err := ps.DB.Query(query)
 	if err != nil {
-
 		return nil, fmt.Errorf("error querying database: %w", err)
 	}
 	defer rows.Close()
 
 	var services []models.Service
-
 	for rows.Next() {
 		var service models.Service
 		err := rows.Scan(&service.Id, &service.Name, &service.Description, &service.Version)
