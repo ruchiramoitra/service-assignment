@@ -5,10 +5,10 @@ import (
 	"os"
 	"strconv"
 
-	"github.com/joho/godotenv"
+	"github.com/spf13/viper"
 )
 
-var GodotenvLoad = godotenv.Load
+var GodotenvLoad = viper.AutomaticEnv
 
 type PostgresDbConfig struct {
 	Host     string
@@ -19,15 +19,19 @@ type PostgresDbConfig struct {
 }
 
 func LoadConfig() (*PostgresDbConfig, error) {
-	if err := GodotenvLoad(); err != nil {
-		return nil, fmt.Errorf("error loading .env file: %w", err)
+	if _, err := os.Stat(".env"); err == nil {
+		// If the file exists, load the .env file
+		viper.SetConfigFile(".env")
+		if err := viper.ReadInConfig(); err != nil {
+			return nil, fmt.Errorf("error reading .env file: %w", err)
+		}
 	}
-
-	host := os.Getenv("DB_HOST")
-	user := os.Getenv("DB_USER")
-	password := os.Getenv("DB_PASSWORD")
-	dbName := os.Getenv("DB_NAME")
-	port := os.Getenv("DB_PORT")
+	viper.AutomaticEnv()
+	host := viper.GetString("DB_HOST")
+	user := viper.GetString("DB_USER")
+	password := viper.GetString("DB_PASSWORD")
+	dbName := viper.GetString("DB_NAME")
+	port := viper.GetString("DB_PORT")
 
 	if host == "" || user == "" || password == "" || dbName == "" || port == "" {
 		return nil, fmt.Errorf("missing required environment variables")

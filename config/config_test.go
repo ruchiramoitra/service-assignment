@@ -47,16 +47,6 @@ func TestLoadConfig(t *testing.T) {
 			errMsg:  "invalid port number",
 		},
 	}
-	originalLoad := config.GodotenvLoad
-	defer func() {
-		// Restore the original function after tests
-		config.GodotenvLoad = originalLoad
-	}()
-
-	// Mock the godotenv.Load function to do nothing
-	config.GodotenvLoad = func(...string) error {
-		return nil
-	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			// Set up environment variables

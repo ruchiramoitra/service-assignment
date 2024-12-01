@@ -9,3 +9,18 @@ services:
       POSTGRES_DB: test_db
     ports:
       - "6432:5432"
+    volumes:
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+  kong-assignment:
+    build: .
+    container_name: kong-assignment
+    ports:
+      - "8081:8081"
+    environment:
+      DB_PORT: 5432
+      DB_HOST: postgres
+      DB_USER: test_user
+      DB_PASSWORD: test_password
+      DB_NAME: test_db
+    depends_on:
+      - postgres
