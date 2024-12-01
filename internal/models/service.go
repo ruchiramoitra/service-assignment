@@ -15,9 +15,10 @@ type Version struct {
 }
 
 type QueryParams struct {
-	Id     string `json:"id"`
-	Name   string `json:"name"`
-	Sort   string `json:"sort"`
-	Limit  string `json:"limit"`
-	Offset string `json:"offset"`
+	Id              string `json:"id"`
+	Name            string `json:"name"`
+	Sort            string `json:"sort"`
+	Limit           string `json:"limit"`
+	Offset          string `json:"offset"`
+	PaginationToken string `json:"pagination_token"`
 }

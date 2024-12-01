@@ -16,13 +16,15 @@ func (handler *ServiceHandler) GetServices(w http.ResponseWriter, r *http.Reques
 	sort := r.URL.Query().Get("sort")
 	limit := r.URL.Query().Get("limit")
 	offset := r.URL.Query().Get("offset")
+	paginationToken := r.URL.Query().Get("pagination_token")
 
 	queryParams := models.QueryParams{
-		Sort:   sort,
-		Limit:  limit,
-		Offset: offset,
+		Sort:            sort,
+		Limit:           limit,
+		Offset:          offset,
+		PaginationToken: paginationToken,
 	}
-	services, err := handler.ServiceRepo.GetServices(queryParams)
+	services, paginationToken, err := handler.ServiceRepo.GetServices(queryParams)
 	if err != nil {
 		fmt.Println("Error getting data: ", err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -30,7 +32,16 @@ func (handler *ServiceHandler) GetServices(w http.ResponseWriter, r *http.Reques
 	}
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
-	json.NewEncoder(w).Encode(services)
+	// Encode the services and pagination token to JSON and write it to the response writer
+
+	response := struct {
+		Services        []models.Service `json:"services"`
+		PaginationToken string           `json:"pagination_token"`
+	}{
+		Services:        services,
+		PaginationToken: paginationToken,
+	}
+	json.NewEncoder(w).Encode(response)
 }
 
 func (handler *ServiceHandler) SearchService(w http.ResponseWriter, r *http.Request) {
