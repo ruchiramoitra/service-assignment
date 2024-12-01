@@ -81,10 +81,12 @@ http://localhost:8081
 When the PostgreSQL database starts, it automatically initializes the schema using the `init.sql` file and inserts some mock data into the `services` and `versions` tables.
 
 ### 8. Sample curls for running
-
-curl --location 'localhost:8081/v1/search/service?name=%22Service%205%22'
-
+```curl
+curl --location 'localhost:8081/v1/services?sort=asc&pagination_token=MTox&limit=3'
+```
+```curl
 curl --location 'localhost:8081/v1/service'
+```
 
 ## 9. Remaining tasks
 
