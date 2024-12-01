@@ -30,16 +30,17 @@ func NewPostgresStorage(db *sql.DB) *PostgresStorage {
 }
 
 // query to get all services
-const BASE_QUERY = "SELECT s.id AS service_id, s.name AS service_name,  s.description AS service_description, COALESCE(COUNT(v.id), 0) AS total_versions,  COALESCE(json_agg(v.name) FILTER (WHERE v.id IS NOT NULL), '[]') AS versions FROM services s LEFT JOIN versions v ON s.id = v.service_id"
+const BASE_QUERY = "SELECT s.id AS service_id, s.name AS service_name,  s.description AS service_description, COALESCE(COUNT(v.id), 0) AS total_versions,  COALESCE(json_agg(v.name) FILTER (WHERE v.id IS NOT NULL), '[]') AS versions FROM services s LEFT JOIN versions v ON s.id = v.service_id "
 
 func (ps *PostgresStorage) GetServices(queryParams models.QueryParams) ([]models.Service, error) {
 	var conditions []string
 
-	var query = BASE_QUERY
+	var query = BASE_QUERY + "GROUP BY s.id"
 
-	if queryParams.Sort != "" {
-		conditions = append(conditions, "ORDER BY "+queryParams.Sort)
+	if queryParams.Sort != "" && (queryParams.Sort == "asc" || queryParams.Sort == "desc") {
+		conditions = append(conditions, " ORDER BY service_name "+queryParams.Sort)
 	}
+
 	if queryParams.Limit != "" {
 		conditions = append(conditions, "LIMIT "+queryParams.Limit)
 	}
@@ -47,12 +48,7 @@ func (ps *PostgresStorage) GetServices(queryParams models.QueryParams) ([]models
 		conditions = append(conditions, "OFFSET "+queryParams.Offset)
 	}
 
-	// Add conditions to the query if any
-	if len(conditions) > 0 {
-		query += " WHERE " + strings.Join(conditions[:1], " ")
-		query += strings.Join(conditions[1:], " ")
-	}
-	query += " GROUP BY s.id"
+	query += strings.Join(conditions, " ")
 	rows, err := ps.DB.Query(query)
 	if err != nil {
 		return nil, fmt.Errorf("error querying database: %w", err)
@@ -86,7 +82,7 @@ func (ps *PostgresStorage) GetServices(queryParams models.QueryParams) ([]models
 }
 
 func (ps *PostgresStorage) SearchService(queryParams models.QueryParams) ([]models.Service, error) {
-	var query = BASE_QUERY + " WHERE "
+	var query = BASE_QUERY + "WHERE "
 
 	// can be queried by name or id
 	if queryParams.Name != "" {

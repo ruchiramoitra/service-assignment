@@ -22,7 +22,6 @@ func TestGetServices(t *testing.T) {
 
 	// Define the query parameters
 	queryParams := models.QueryParams{
-		Name:   "test-service",
 		Sort:   "asc",
 		Limit:  "10",
 		Offset: "0",
@@ -31,16 +30,18 @@ func TestGetServices(t *testing.T) {
 	// Define the expected services to return from the mock
 	expectedServices := []models.Service{
 		{
-			Id:          "1",
-			Name:        "test-service-1",
-			Description: "Test service 1",
-			Version:     "1.0",
+			Id:            "1",
+			Name:          "test-service-1",
+			Description:   "Test service 1",
+			Versions:      []string{"1.0", "1.1"},
+			TotalVersions: 2,
 		},
 		{
-			Id:          "2",
-			Name:        "test-service-2",
-			Description: "Test service 2",
-			Version:     "1.1",
+			Id:            "2",
+			Name:          "test-service-2",
+			Description:   "Test service 2",
+			Versions:      []string{"1.1"},
+			TotalVersions: 1,
 		},
 	}
 
@@ -64,7 +65,7 @@ func TestGetServices(t *testing.T) {
 
 	assert.Equal(t, http.StatusOK, rr.Code)
 
-	expectedBody := `[{"id":"1","name":"test-service-1","description":"Test service 1","version":"1.0"},{"id":"2","name":"test-service-2","description":"Test service 2","version":"1.1"}]`
+	expectedBody := `[{"id":"1","name":"test-service-1","description":"Test service 1","versions":["1.0","1.1"],"total_versions":2},{"id":"2","name":"test-service-2","description":"Test service 2","versions":["1.1"],"total_versions":1}]`
 	assert.JSONEq(t, expectedBody, rr.Body.String())
 
 }

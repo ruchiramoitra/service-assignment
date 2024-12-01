@@ -52,3 +52,18 @@ func (mr *MockServiceRepoMockRecorder) GetServices(queryParams any) *gomock.Call
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetServices", reflect.TypeOf((*MockServiceRepo)(nil).GetServices), queryParams)
 }
+
+// SearchService mocks base method.
+func (m *MockServiceRepo) SearchService(queryParams models.QueryParams) ([]models.Service, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "SearchService", queryParams)
+	ret0, _ := ret[0].([]models.Service)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// SearchService indicates an expected call of SearchService.
+func (mr *MockServiceRepoMockRecorder) SearchService(queryParams any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SearchService", reflect.TypeOf((*MockServiceRepo)(nil).SearchService), queryParams)
+}
