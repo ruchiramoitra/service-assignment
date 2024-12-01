@@ -89,7 +89,11 @@ curl --location 'localhost:8081/v1/service'
 ## 9. Remaining tasks
 
 a. Add authorisation layer for the APIs -- we can add a login method and create a jwt based authentication. When a user logs in, issue a JWT token containing the user’s credentials and other metadata. Add a middleware for the apis where we check if the token is present or not. When logging in it is checked against the db for username and password.
+
+
 b. Full tests (unit and integrations) -- have added few unit tests. For integration tests. We can spinup postgres db in docker and check end to end results if working correctly or not.
+
+
 c. Add CRUD operations to the APIs -- like search we can add delete, update create end points too where we would need the corresponding queries to update in the db.
 
 
