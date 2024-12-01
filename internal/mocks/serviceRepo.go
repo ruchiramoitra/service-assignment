@@ -54,12 +54,13 @@ func (mr *MockServiceRepoMockRecorder) GetServices(queryParams any) *gomock.Call
 }
 
 // SearchService mocks base method.
-func (m *MockServiceRepo) SearchService(queryParams models.QueryParams) ([]models.Service, error) {
+func (m *MockServiceRepo) SearchService(queryParams models.QueryParams) ([]models.Service, string, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "SearchService", queryParams)
 	ret0, _ := ret[0].([]models.Service)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
+	ret1, _ := ret[1].(string)
+	ret2, _ := ret[2].(error)
+	return ret0, ret1, ret2
 }
 
 // SearchService indicates an expected call of SearchService.
